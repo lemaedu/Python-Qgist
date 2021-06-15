@@ -56,8 +56,26 @@ def union_centros():
         #creamos la geometria
         geomPolg=QgsGeometry.fromPolygonXY([listac])        
         entidadPolg.setGeometry(geomPolg)        
-        capaPolg.dataProvider().addFeatures([entidadPolg])
+        capaPolg.dataProvider().addFeatures([entidadPolg])        
         
-        QgsProject.instance().addMapLayers([capaLinea,capaPolg])
+        #CAPA DE PUNTOS
+        uriPuntos="point?crs="+sc+tf
+        #QgsVectorLayer(tipodecapa,"nombre de capa", en memoria)
+        capaPunto=QgsVectorLayer(uriPuntos,"punto centro", "memory")
+        #definimos campos, para lo cual la capa debe estar como editable=dataProvider
+        capaPunto.dataProvider().addAttributes(listaCapas[0].fields())
+        #actualiza capa
+        capaPunto.updateFields()
+        #creamos entidades o features
+        entidadPunto=QgsFeature()
+        entidadPunto.setFields(capaPunto.fields())
+        
+        #creamos la geometria
+        geomPunto=QgsGeometry.fromPointXY(listac[0])        
+        entidadPunto.setGeometry(geomPunto)        
+        capaPunto.dataProvider().addFeatures([entidadPunto])
+        
+        
+        QgsProject.instance().addMapLayers([capaLinea,capaPolg,capaPunto])
         
 union_centros()
